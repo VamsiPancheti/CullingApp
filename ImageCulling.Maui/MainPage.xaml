@@ -1,0 +1,76 @@
+﻿<!-- MainPage.xaml -->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ImageCulling.Maui.Models"
+             x:Class="ImageCulling.Maui.MainPage"
+             BackgroundColor="#121212">
+
+    <Grid>
+        <!-- MAIN VIEW (Underneath Preview) -->
+        <Grid RowDefinitions="Auto,*" Padding="20" RowSpacing="15">
+            <!-- Action Control Bar -->
+            <HorizontalStackLayout Grid.Row="0" Spacing="10" VerticalOptions="Center">
+                <Entry Text="{Binding FolderPath}" WidthRequest="400" Placeholder="Paste RAW Folder Path Here..." TextColor="White"/>
+                <Button Text="Analyze Gallery" Command="{Binding AnalyzeFolderCommand}" WidthRequest="150" BackgroundColor="#512BD4"/>
+                <Label Text="{Binding StatusMessage}" TextColor="LightGray" VerticalOptions="Center" Margin="10,0,0,0"/>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#512BD4"/>
+            </HorizontalStackLayout>
+
+            <!-- Grid Gallery Categorized View -->
+            <CollectionView Grid.Row="1" ItemsSource="{Binding CategorizedPhotos}" IsGrouped="True" SelectionMode="Single" SelectedItem="{Binding SelectedPhoto}">
+                
+                <!-- Category Header -->
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate x:DataType="models:VisualCategoryGroup">
+                        <Label Text="{Binding CategoryName}" TextColor="#3498DB" FontAttributes="Bold" FontSize="20" Margin="0,20,0,10" />
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+
+                <!-- Grid Item Rendering -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:VisualPhoto">
+                        <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 8" StrokeThickness="0" Margin="5">
+                            <Grid RowDefinitions="180, Auto">
+                                <!-- Image fills top area -->
+                                <Image Grid.Row="0" Source="{Binding ThumbnailSource}" Aspect="AspectFill" />
+                                
+                                <!-- Metadata Ribbon -->
+                                <VerticalStackLayout Grid.Row="1" Padding="8" BackgroundColor="#222222">
+                                    <Label Text="{Binding FileName}" TextColor="White" FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding Status}" TextColor="#A0A0A0" FontSize="11"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <!-- Gallery Grid Layout (4 columns) -->
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="10" VerticalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+        </Grid>
+
+        <!-- FULL SCREEN PREVIEW OVERLAY -->
+        <Grid IsVisible="{Binding IsPreviewVisible}" BackgroundColor="#E6000000" Padding="40">
+            <Grid RowDefinitions="*, Auto" ColumnDefinitions="*, Auto">
+                
+                <!-- Large Image Preview -->
+                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                       Source="{Binding SelectedPhoto.ThumbnailSource}" 
+                       Aspect="AspectFit" Margin="0,0,0,20"/>
+                
+                <!-- File Info Overlay -->
+                <StackLayout Grid.Row="1" Grid.Column="0" VerticalOptions="End">
+                    <Label Text="{Binding SelectedPhoto.FileName}" TextColor="White" FontSize="24" FontAttributes="Bold"/>
+                    <Label Text="{Binding SelectedPhoto.Status}" TextColor="#3498DB" FontSize="16"/>
+                </StackLayout>
+
+                <!-- Close Button -->
+                <Button Grid.Row="0" Grid.Column="1" Text="X" Command="{Binding ClosePreviewCommand}" 
+                        BackgroundColor="DarkRed" TextColor="White" CornerRadius="20" 
+                        WidthRequest="40" HeightRequest="40" VerticalOptions="Start" HorizontalOptions="End"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

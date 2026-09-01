@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ImageCulling.Core/ImageCulling.Core.csproj" />
+  <Project Path="ImageCulling.Maui/ImageCulling.Maui.csproj" />
+</Solution>
